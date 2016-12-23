@@ -10,18 +10,18 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    var calc:calc!
-    var textCount = 0
+    let calcDate = calc()
+    //var textCount = 0
     //記号格納用配列
-    var operators:String = ""
+    //var operators:String = ""
     //計算用配列
-    var calcArray:[Int64] = []
+    //var calcArray:[Int64] = []
     //確定値用配列
-    var result:[Int64] = [0]
+    //var result:[Int64] = [0]
     //
-    var count:Int = 0
+    //var count:Int = 0
     //
-    var loc:Int = 0
+    //var loc:Int = 0
     
     @IBOutlet weak var Label: UILabel!
     
@@ -41,99 +41,42 @@ class ViewController: UIViewController {
 
     
     @IBAction func waru(_ sender: Any) {
-        let textTmp = Label.text
+        //let textTmp = Label.text
         //文字列を数値にキャストして計算用配列に代入
-        calcArray.append(Int64(textTmp!)!)
-        operators.append("/")
+        //calcArray.append(Int64(textTmp!)!)
+        //operators.append("/")
         Label.text?.append(" / ")
         //0除算のエラー処理
     }
 
     @IBAction func kakeru(_ sender: Any) {
-        //指定した範囲の文字列を抜き出す。記号の前の数値を抜き出して計算用配列に格納する
-        //substring(with:start,length:スタート地点からの文字数まで)
-        let textTmp = NSString(string: Label.text!).substring(with: NSRange(location: loc, length: (Label.text?.characters.count)!-loc))
-        calcArray.append(Int64(textTmp)!)
-        //２個以上格納されていたら計算して確定値配列に格納する
-        print("calcArray.count = \(calcArray.count)")
-        if calcArray.count == 2 {
-            if operators == "*" {
-                print("calcArray[0]=\(calcArray[0]),calcArray[1]=\(calcArray[1])")
-                if result[count] == 0 {
-                    result[count] = result[count] + calcArray[0]*calcArray[1]
-                    print("1")
-                }else {
-                    result[count] = result[count] * calcArray[1]
-                    print("2")
-                }
-                calcArray.removeLast()
-                calcArray[0] = result[count]
-            }else if operators == "/" {
-                //result = calcArray[0]/calcArray[1]
-                calcArray.removeLast()
-                //calcArray[0] = result
-            }else if operators == "+" {
-                print("count=\(count), result = \(result.count)")
-                result[count-1] = calcArray[0]
-                calcArray.removeFirst()
-                print("++3")
-            }else if operators == "-" {
-                //result = calcArray[0]-calcArray[1]
-            }
-            
+        if Label.text != "" {
+            calcDate.kakeru(Label: Label.text!)
+            Label.text?.append("×")
         }
-        print("result = \(result)")
-        operators = ("*")
-        Label.text?.append(" × ")
-        loc = (Label.text?.characters.count)!
+        
     }
     
     @IBAction func minus(_ sender: Any) {
-        Label.text?.append(" - ")
+        Label.text?.append("-")
         //マイナスフラグを反転させる
     }
     
     
     @IBAction func plus(_ sender: Any) {
-        //let textTmp = Label.text
-        //plusArray.append(1)
-        //result = result + calcData
-        count = count + 1
-        result.append(0)
-        let textTmp = NSString(string: Label.text!).substring(with: NSRange(location: loc, length: (Label.text?.characters.count)!-loc))
-        calcArray.append(Int64(textTmp)!)
-        if calcArray.count == 2 {
-            result[count-1] = calcArray[0]*calcArray[1]
-        }else{
-            result[count-1] = calcArray[0]
+        if Label.text != "" {
+            print("Label = \(Label.text!)")
+            
+            calcDate.plus(Label: Label.text!)
+            Label.text?.append("+")
+            print("result = \(calcDate.result)")
         }
-        calcArray.removeAll()
-        //２個以上格納されていたら計算して確定値配列に格納する
-        if calcArray.count == 2 {
-            if operators == "*" {
-                print("＋のcalcArray[0]=\(calcArray[0]),calcArray[1]=\(calcArray[1])")
-                //result = calcArray[0]*calcArray[1]
-            }else if operators == "/" {
-                //result = calcArray[0]/calcArray[1]
-            }else if operators == "+" {
-                //result = calcArray[0]+calcArray[1]
-                calcArray.removeLast()
-                //calcArray[0] = result
-            }else if operators == "-" {
-                //result = calcArray[0]-calcArray[1]
-            }
-            calcArray.removeLast()
-            //calcArray[0] = result
-        }
-        print("+のresult = \(result)")
-        operators = ("+")
-        Label.text?.append(" + ")
-        loc = (Label.text?.characters.count)!
+        
     }
     
     @IBAction func equal(_ sender: Any) {
         //Label.text?.append(" = ")
-        var str = Label.text!
+        //var str = Label.text!
         //calc.calc(str: str)
     }
     
