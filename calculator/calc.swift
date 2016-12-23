@@ -14,9 +14,9 @@ class calc {
     //記号格納用配列
     var operators:String = ""
     //計算用配列
-    var calcArray:[Int64] = []
+    var calcArray:[Double] = []
     //確定値用配列
-    var result:[Int64] = [0]
+    var result:[Double] = [0]
     //
     var count:Int = 0
     //
@@ -29,27 +29,33 @@ class calc {
     
     
     func kakeru(Label: String?){
+        //-符号が付いている場合、文字列の抜き出しは-も含めるようにする
+        if(Label!.substring(from: Label!.index(before: Label!.endIndex))) == "-"{
+            loc = loc+1
+        }
         //指定した範囲の文字列を抜き出す。記号の前の数値を抜き出して計算用配列に格納する
         //substring(with:start,length:スタート地点からの文字数まで)
         if loc != 0 {
         let textTmp = NSString(string: Label!).substring(with: NSRange(location: loc, length: (Label?.characters.count)!-loc))
 
-        calcArray.append(Int64(textTmp)!)
+        calcArray.append(Double(textTmp)!)
         }else{
             //let textTemp = Label?.substring(to: (Label?.index(after: (Label?.startIndex)!))!)
-            calcArray.append(Int64(Label!)!)
+            calcArray.append(Double(Label!)!)
         }
         //２個以上格納されていたら計算して確定値配列に格納する
         print("calcArray.count = \(calcArray.count)")
+        
+        //+でカウントが消えるから必要ない？
         if calcArray.count == 2 {
             if operators == "*" {
                 print("calcArray[0]=\(calcArray[0]),calcArray[1]=\(calcArray[1])")
                 if result[count] == 0 {
+                    //resultに何も入っていない場合（一番最初の場合）
                     result[count] = result[count] + calcArray[0]*calcArray[1]
-                    print("1")
                 }else {
+                    //resultに値が入ってる場合その数値と掛け合わせる
                     result[count] = result[count] * calcArray[1]
-                    print("2")
                 }
                 calcArray.removeLast()
                 calcArray[0] = result[count]
@@ -57,25 +63,20 @@ class calc {
                 //result = calcArray[0]/calcArray[1]
                 calcArray.removeLast()
                 //calcArray[0] = result
-            }else if operators == "+" {
-                print("count=\(count), result = \(result.count)")
-                result[count-1] = calcArray[0]
-                calcArray.removeFirst()
-                print("++3")
-            }else if operators == "-" {
-                //result = calcArray[0]-calcArray[1]
             }
-            
         }
         print("result = \(result)")
         operators = ("*")
-        loc = (Label?.characters.count)!+1
+        //文字列抜き出しの開始位置をずらす（計算済みのところを排除したい）
+        loc = (Label?.characters.count)!+3
     }
     
     
     func plus(Label: String?){
-        print("+のLabel = \(Label)")
-        count = count + 1
+        if(Label!.substring(from: Label!.index(before: Label!.endIndex))) == "-"{
+            loc = loc+1
+        }
+        //resultの配列要素を増やす（新しく追加した+以前の数値を計算済みとする）
         result.append(0)
         if loc != 0 {
         let textTmp = NSString(string: Label!).substring(with: NSRange(location: loc, length: (Label?.characters.count)!-loc))
@@ -85,10 +86,10 @@ class calc {
         print("textTmp = \(textTmp)")
         print("calcArray.count = \(calcArray.count)")
 
-        calcArray.append(Int64(textTmp)!)
+        calcArray.append(Double(textTmp)!)
         }else{
             //let textTemp = Label?.substring(to: (Label?.index(Label!.startIndex, offsetBy: 5))!)
-            calcArray.append(Int64(Label!)!)
+            calcArray.append(Double(Label!)!)
         }
         print("calcArray2 = \(calcArray)")
         
@@ -117,7 +118,7 @@ class calc {
         }
         print("+のresult = \(result)")
         //ラベルの文字数と演算子分の文字数（３）を足す
-        loc = (Label?.characters.count)!+1
+        loc = (Label?.characters.count)!+3
         operators = ("+")
         
     }

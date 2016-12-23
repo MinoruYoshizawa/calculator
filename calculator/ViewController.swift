@@ -22,6 +22,7 @@ class ViewController: UIViewController {
     //var count:Int = 0
     //
     //var loc:Int = 0
+    var labelTmp:String = ""
     
     @IBOutlet weak var Label: UILabel!
     
@@ -50,28 +51,50 @@ class ViewController: UIViewController {
     }
 
     @IBAction func kakeru(_ sender: Any) {
-        if Label.text != "" {
-            calcDate.kakeru(Label: Label.text!)
-            Label.text?.append("×")
+        if Label.text != ""{
+            if(Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " "{
+                calcDate.kakeru(Label: Label.text!)
+                Label.text?.append(" × ")
+            }
         }
         
     }
     
     @IBAction func minus(_ sender: Any) {
-        Label.text?.append("-")
-        //マイナスフラグを反転させる
+        //文字列に数字が含まれているかチェックするインスタンスを用意
+        let predicate = NSPredicate(format: "SELF MATCHES '\\\\d+'")
+        //Labelが空でない場合
+        if Label.text != ""{
+            //末尾が-でない場合
+            if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-"{
+                //末尾が記号でない場合
+                if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " " {
+                    Label.text?.append(" - ")
+                }
+                //末尾が数字でない場合
+                else if predicate.evaluate(with: (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex)))){
+                    Label.text?.append("-")
+                }
+                //末尾が記号の場合
+                else if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) == " " {
+                    Label.text?.append("-")
+                }
+                
+            }
+        }else if Label.text == ""{
+            Label.text?.append("-")
+        }
     }
     
     
     @IBAction func plus(_ sender: Any) {
-        if Label.text != "" {
-            print("Label = \(Label.text!)")
-            
-            calcDate.plus(Label: Label.text!)
-            Label.text?.append("+")
+            if Label.text != ""{
+                if(Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " "{
+                    calcDate.plus(Label: Label.text!)
+                    Label.text?.append(" + ")
+                }
+            }
             print("result = \(calcDate.result)")
-        }
-        
     }
     
     @IBAction func equal(_ sender: Any) {
