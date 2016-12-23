@@ -10,17 +10,17 @@ import Foundation
 
 class calc {
 
-    var textCount = 0
-    //記号格納用配列
+    //記号格納用変数
     var operators:String = ""
     //計算用配列
     var calcArray:[Double] = []
     //確定値用配列
     var result:[Double] = [0]
-    //
-    var count:Int = 0
-    //
+    //文字列抜き出し用変数
     var loc:Int = 0
+    //演算が行われた数をカウントしresult配列のどこに答えを格納するか判断するための変数
+    var count:Int = 0
+    
     
     init() {
         self.operators = "First"
@@ -73,22 +73,18 @@ class calc {
     
     
     func plus(Label: String?){
+        count = count + 1
         if(Label!.substring(from: Label!.index(before: Label!.endIndex))) == "-"{
             loc = loc+1
         }
         //resultの配列要素を増やす（新しく追加した+以前の数値を計算済みとする）
         result.append(0)
+        //最初の計算でない時
         if loc != 0 {
         let textTmp = NSString(string: Label!).substring(with: NSRange(location: loc, length: (Label?.characters.count)!-loc))
-        print("calcArray = \(calcArray)")
-        print("loc = \(loc)")
-        print("LabelLength = \((Label?.characters.count)!)")
-        print("textTmp = \(textTmp)")
-        print("calcArray.count = \(calcArray.count)")
-
         calcArray.append(Double(textTmp)!)
+        //最初の計算の時
         }else{
-            //let textTemp = Label?.substring(to: (Label?.index(Label!.startIndex, offsetBy: 5))!)
             calcArray.append(Double(Label!)!)
         }
         print("calcArray2 = \(calcArray)")
@@ -98,24 +94,8 @@ class calc {
         }else{
             result[count-1] = calcArray[0]
         }
+        //計算用配列全消去
         calcArray.removeAll()
-        //２個以上格納されていたら計算して確定値配列に格納する
-        if calcArray.count == 2 {
-            if operators == "*" {
-                print("＋のcalcArray[0]=\(calcArray[0]),calcArray[1]=\(calcArray[1])")
-                //result = calcArray[0]*calcArray[1]
-            }else if operators == "/" {
-                //result = calcArray[0]/calcArray[1]
-            }else if operators == "+" {
-                //result = calcArray[0]+calcArray[1]
-                calcArray.removeLast()
-                //calcArray[0] = result
-            }else if operators == "-" {
-                //result = calcArray[0]-calcArray[1]
-            }
-            calcArray.removeLast()
-            //calcArray[0] = result
-        }
         print("+のresult = \(result)")
         //ラベルの文字数と演算子分の文字数（３）を足す
         loc = (Label?.characters.count)!+3
