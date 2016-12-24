@@ -39,16 +39,6 @@ class ViewController: UIViewController {
         calcDate.count = 0
     }
     
-    @IBAction func plus_minus(_ sender: Any) {
-        
-    }
-    
-    
-    @IBAction func percent(_ sender: Any) {
-        Label.text?.append(" % ")
-    }
-
-    
     @IBAction func waru(_ sender: Any) {
         if Label.text != ""{
             if(Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " "{
@@ -108,56 +98,35 @@ class ViewController: UIViewController {
     }
     
     @IBAction func equal(_ sender: Any) {
+        //初期状態、記号の後、＝の直後（数値が末尾）の場合以外
         if Label.text != "" && (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " " && calcDate.operators != "=" {
+            //計算結果を入手
             let result = calcDate.equal(Label: Label.text!)
             Label.text?.append(" = ")
+            //計算結果を出力
             Label.text?.append(" \(result) ")
         }
     }
-    
-    @IBAction func button7(_ sender: Any) {
-        Label.text?.append("7")
-    }
-    
-    @IBAction func button8(_ sender: Any) {
-        Label.text?.append("8")
-    }
-    
-    @IBAction func button9(_ sender: Any) {
-        Label.text?.append("9")
-    }
-    
-    @IBAction func button4(_ sender: Any) {
-        Label.text?.append("4")
-    }
-    
-    @IBAction func button5(_ sender: Any) {
-        Label.text?.append("5")
-    }
-    
-    @IBAction func button6(_ sender: Any) {
-        Label.text?.append("6")
-    }
-    
-    @IBAction func button1(_ sender: Any) {
-        Label.text?.append("1")
-    }
-    
-    @IBAction func button2(_ sender: Any) {
-        Label.text?.append("2")
-    }
-   
-    @IBAction func button3(_ sender: Any) {
-        Label.text?.append("3")
-    }
-    
-    @IBAction func button0(_ sender: Any) {
-        Label.text?.append("0")
-    }
-    
-    @IBAction func buttonP(_ sender: Any) {
-        Label.text?.append(".")
-        
+
+    //数字の処理をまとめて記述
+    @IBAction func num(_ sender: UIButton) {
+        print((NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc))).contains("."))
+        print("calcDAte.loc = \(calcDate.loc)")
+        print("length = \(Label.text!.characters.count-calcDate.loc)")
+        print("sender.tag = \(sender.tag)")
+        //=の後には出力しない
+        if calcDate.operators != "="{
+            //数字の場合
+            if sender.tag < 10 {
+                Label.text?.append("\(sender.tag)")
+            //ピリオドの場合
+            }else if Label.text != "" && (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " " {
+                //ピリオドを連続で出力することを防止する
+                if (NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc))).contains(".") == false {
+                    Label.text?.append(".")
+                }
+            }
+        }
     }
     
     override func viewDidLoad() {
