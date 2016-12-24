@@ -28,7 +28,15 @@ class ViewController: UIViewController {
     
     
     @IBAction func AC(_ sender: Any) {
+        //ラベルを初期化
         Label.text = ""
+        //calcDateの変数を初期化
+        calcDate.operators = ""
+        calcDate.resultMinus = false
+        calcDate.calcArray.removeAll()
+        calcDate.result.removeAll()
+        calcDate.loc = 0
+        calcDate.count = 0
     }
     
     @IBAction func plus_minus(_ sender: Any) {
@@ -42,11 +50,12 @@ class ViewController: UIViewController {
 
     
     @IBAction func waru(_ sender: Any) {
-        //let textTmp = Label.text
-        //文字列を数値にキャストして計算用配列に代入
-        //calcArray.append(Int64(textTmp!)!)
-        //operators.append("/")
-        Label.text?.append(" / ")
+        if Label.text != ""{
+            if(Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " "{
+                calcDate.waru(Label: Label.text!)
+                Label.text?.append(" ÷ ")
+            }
+        }
         //0除算のエラー処理
     }
 
@@ -69,14 +78,15 @@ class ViewController: UIViewController {
             if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-"{
                 //末尾が記号でない場合
                 if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " " {
+                    calcDate.minus(Label: Label.text!)
                     Label.text?.append(" - ")
                 }
                 //末尾が数字でない場合
-                else if predicate.evaluate(with: (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex)))){
+                else if predicate.evaluate(with: (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex)))) && calcDate.operators != "="{
                     Label.text?.append("-")
                 }
                 //末尾が記号の場合
-                else if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) == " " {
+                else if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) == " " && calcDate.operators != "="{
                     Label.text?.append("-")
                 }
                 
@@ -98,9 +108,11 @@ class ViewController: UIViewController {
     }
     
     @IBAction func equal(_ sender: Any) {
-        //Label.text?.append(" = ")
-        //var str = Label.text!
-        //calc.calc(str: str)
+        if Label.text != "" && (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " " && calcDate.operators != "=" {
+            let result = calcDate.equal(Label: Label.text!)
+            Label.text?.append(" = ")
+            Label.text?.append(" \(result) ")
+        }
     }
     
     @IBAction func button7(_ sender: Any) {
@@ -147,22 +159,16 @@ class ViewController: UIViewController {
         Label.text?.append(".")
         
     }
-
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-        
-        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
 
 }
 
