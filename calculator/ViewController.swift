@@ -4,15 +4,18 @@
 //
 //  Created by 吉澤実 on H28/12/10.
 //  Copyright © 平成28年 吉澤実. All rights reserved.
-//
+//  
 
+//四則演算を行う計算機、結果は小数点第４位で四捨五入される,10桁までの演算に制限
 import UIKit
 
 class ViewController: UIViewController {
-    
+    //calcクラスのインスタンスを作っておく
     let calcDate = calc()
+    //計算する部分のラベル文字列を入れておくための箱
     var strTmp:String = ""
-    
+    var MinusZeroCheck:String = ""
+    //ラベルを改行していきたかったので用意
     @IBOutlet weak var scrollView: UIScrollView!
     
     @IBOutlet weak var Label: UILabel!
@@ -26,9 +29,10 @@ class ViewController: UIViewController {
         calcDate.resultMinus = false
         calcDate.calcArray.removeAll()
         calcDate.result.removeAll()
-        calcDate.result = [0]
+        calcDate.result = [0]//最初に1要素が必要な作りにしてしまったので用意しとく
         calcDate.loc = 0
         calcDate.count = 0
+        MinusZeroCheck = ""
     }
     
     @IBAction func waru(_ sender: Any) {
@@ -124,24 +128,45 @@ class ViewController: UIViewController {
         }
     }
 
-    //数字の処理をまとめて記述
+    //数字ボタンが押されたときの処理をまとめて記述
     @IBAction func num(_ sender: UIButton) {
-        print((NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc))).contains("."))
-        print("calcDAte.loc = \(calcDate.loc)")
-        print("length = \(Label.text!.characters.count-calcDate.loc)")
-        print("sender.tag = \(sender.tag)")
+        //デバッグ用print文
+//        print((NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc))).contains("."))
+//        print("calcDAte.loc = \(calcDate.loc)")
+//        print("length = \(Label.text!.characters.count-calcDate.loc)")
+//        print("sender.tag = \(sender.tag)")
+        
+        //例外処理を行うために現在の計算部分を抜き出しておく
         strTmp = (NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc)))
-        //=の後には出力しない
-        if calcDate.operators != "="{
-            //数字の場合
+        
+        if strTmp.characters.count > 1 {
+        let str1 = strTmp[strTmp.startIndex]
+        let str2 = strTmp[strTmp.index(after: strTmp.startIndex)]
+        MinusZeroCheck = String(str1) + String(str2)
+        print("str3i = \(MinusZeroCheck)")
+        }
+        
+        //全ての場合で=の後には出力しない
+        if calcDate.operators != "=" {
+            //数字の場合（数字は0~9のtagが設定されている）
             if sender.tag < 10{
-                if strTmp != "" && strTmp[strTmp.startIndex] != "0" {
-            
+                //最初の数字が0出ない場合（01234とかを入力させない）＋10桁までしか入力させない
+                if strTmp != "" && strTmp[strTmp.startIndex] != "0" && (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-" && MinusZeroCheck != "-0" && fabs(Double(strTmp)!) < 100000000.0{
+                        print("str3 = \(MinusZeroCheck)")
                         Label.text?.append("\(sender.tag)")
-                    
+                //二番目の文字が.の場合（0.0000はOK）
                 }else if strTmp.characters.count > 1 && strTmp[strTmp.index(after: strTmp.startIndex)] == "." {
+                    print(2)
                     Label.text?.append("\(sender.tag)")
+                //現在の計算部分に何も入力されていない場合は何の制限も無い
                 }else if strTmp == "" {
+                    print(3)
+                    Label.text?.append("\(sender.tag)")
+                }else if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) == "-" {
+                    print(4)
+                    Label.text?.append("\(sender.tag)")
+                }else if strTmp.characters.count > 2 && strTmp[strTmp.index(after: strTmp.index(after: strTmp.startIndex))] == "." {
+                    print(5)
                     Label.text?.append("\(sender.tag)")
                 }
                 
@@ -155,44 +180,6 @@ class ViewController: UIViewController {
                     }
                 }
             }
-            if sender.tag == 0{
-                
-                /*
-                if strTmp != "" && strTmp[strTmp.startIndex] != "0" {
-                    Label.text?.append("\(sender.tag)")
-                }else if strTmp == "" {
-                    Label.text?.append("\(sender.tag)")
-                }else if strTmp.characters.count > 1 && strTmp[strTmp.index(after: strTmp.startIndex)] == "." {
-                    Label.text?.append("\(sender.tag)")
-                }
-                */
-                /*
-                if(calcDate.loc != 0){
-                    //print("label.text.endIndex = \((Label.text?.endIndex)!), offsetBy:\((Label.text!.characters.count)-calcDate.loc))))")
-                    //print("before:label = \(Label.text?.index(before:(Label.text?.endIndex)!))")
-                    
-                    //strTmp = (Label.text?.substring(to:Label.text!.index((Label.text?.endIndex)!, offsetBy: (Label.text!.characters.count)-calcDate.loc)))!
-                    
-                    //let str = (NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc)))
-                    //print(str[str.startIndex])
-                    
-                
-                }else if strTmp != ""{
-                    if strTmp[strTmp.startIndex] != "0" {
-                        self.Label.text?.append("\(sender.tag)")
-                    }
-                }else {
-                    self.Label.text?.append("\(sender.tag)")
-                }
-                */
-                
-                
-                //if (NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc))).contains(".") == true {
-                   // if Label.text?.substring(to:Label.text!.index((Label.text?.endIndex)!, offsetBy: (Label.text!.characters.count)-calcDate.loc)) == ""{
-                       // self.Label.text?.append("\(sender.tag)")
-                   // }
-                //}
-            }
         }
     }
     
@@ -201,7 +188,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         //self.view.backgroundColor = UIColor.white
         //let screenSize = UIScreen.main.bounds.size
-        // 表示可能最大行数を無制限にする.
+        // ラベルの表示可能最大行数を無制限にする.
         Label.numberOfLines = 0
     }
 

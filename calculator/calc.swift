@@ -12,7 +12,7 @@ class calc {
 
     //記号格納用変数
     var operators:String = ""
-    //-の場合に符号を判定させるための変数
+    //-の場合に符号を反転させるためのフラグ
     var resultMinus:Bool = false
     //計算用配列
     var calcArray:[Double] = []
@@ -22,10 +22,6 @@ class calc {
     var loc:Int = 0
     //演算が行われた数をカウントしresult配列のどこに答えを格納するか判断するための変数
     var count:Int = 0
-    
-    init() {
-        self.operators = "First"
-    }
     
     func kakeru(Label: String?){
         //-符号が付いている場合、文字列の抜き出しは-も含めるようにする
@@ -89,7 +85,6 @@ class calc {
         //substring(with:start,length:スタート地点からの文字数まで)
         if loc != 0 {
             let textTmp = NSString(string: Label!).substring(with: NSRange(location: loc, length: (Label?.characters.count)!-loc))
-            
             calcArray.append(Double(textTmp)!)
         }else{
             calcArray.append(Double(Label!)!)
@@ -148,7 +143,7 @@ class calc {
         }else{
             calcArray.append(Double(Label!)!)
         }
-        print("calcArray2 = \(calcArray)")
+        print("calcArray = \(calcArray)")
         //×とか/の計算が必要な場合
         if calcArray.count == 2 {
             if operators == "*" {
@@ -157,7 +152,7 @@ class calc {
                 if calcArray[1] != 0{
                     result[count-1] = round((calcArray[0]/calcArray[1])*1000)/1000
                 }else{
-                    
+                    print("0除算が発生")
                 }
             }
             //演算子が-の場合符号を反転させる
@@ -174,7 +169,7 @@ class calc {
         //計算用配列全消去
         calcArray.removeAll()
         resultMinus = false
-        print("+ result = \(result)")
+        print("result = \(result)")
         //ラベルの文字数と演算子分の文字数（３）を足す
         loc = (Label?.characters.count)!+3
         operators = ("+")
@@ -196,7 +191,7 @@ class calc {
         }else{
             calcArray.append(Double(Label!)!)
         }
-        print("calcArray2 = \(calcArray)")
+        print("calcArray = \(calcArray)")
         
         if calcArray.count == 2 {
             if operators == "*" {
@@ -205,7 +200,7 @@ class calc {
                 if calcArray[1] != 0{
                     result[count-1] = round((calcArray[0]/calcArray[1])*1000)/1000
                 }else{
-                    
+                    print("0除算が発生")
                 }
             }
         }else{
@@ -217,7 +212,7 @@ class calc {
         if resultMinus == true {
             result[count-1] = result[count-1] * -1
         }
-        print("+のresult = \(result)")
+        print("result = \(result)")
         //ラベルの文字数と演算子分の文字数（３）を足す
         loc = (Label?.characters.count)!+3
         operators = ("-")
@@ -239,7 +234,7 @@ class calc {
         }else{
             calcArray.append(Double(Label!)!)
         }
-        print("calcArray2 = \(calcArray)")
+        print("calcArray = \(calcArray)")
         //×とか/の計算が必要な場合
         if calcArray.count == 2 {
             if operators == "*" {
@@ -264,10 +259,7 @@ class calc {
         }
         //計算用配列全消去
         calcArray.removeAll()
-        //resultMinus = false
-        print("+のresult = \(result)")
-        //ラベルの文字数と演算子分の文字数（３）を足す
-        //loc = (Label?.characters.count)!+3
+        print("result = \(result)")
         operators = ("=")
         //return配列の中身を足し合わせる
         return (result.reduce(0, { $0 + $1 }))
