@@ -14,12 +14,10 @@ class ViewController: UIViewController {
     let calcDate = calc()
     //計算する部分のラベル文字列を入れておくための箱
     var strTmp:String = ""
-    var MinusZeroCheck:String = ""
-    //ラベルを改行していきたかったので用意
+    //ラベルを改行したかったので用意
     @IBOutlet weak var scrollView: UIScrollView!
     
     @IBOutlet weak var Label: UILabel!
-    
     
     @IBAction func AC(_ sender: Any) {
         //ラベルを初期化
@@ -32,7 +30,8 @@ class ViewController: UIViewController {
         calcDate.result = [0]//最初に1要素が必要な作りにしてしまったので用意しとく
         calcDate.loc = 0
         calcDate.count = 0
-        MinusZeroCheck = ""
+        //"-0"のチェックをするための箱を初期化
+        calcDate.MinusZeroCheck = ""
     }
     
     @IBAction func waru(_ sender: Any) {
@@ -89,7 +88,6 @@ class ViewController: UIViewController {
                         }
                     }
                 }
-                
             }
         }else if Label.text == ""{
             Label.text?.append("-")
@@ -138,35 +136,31 @@ class ViewController: UIViewController {
         
         //例外処理を行うために現在の計算部分を抜き出しておく
         strTmp = (NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc)))
-        
+        //"-0"の時数字を入力できないようにするために、先頭二文字を抜き出しておく
         if strTmp.characters.count > 1 {
-        let str1 = strTmp[strTmp.startIndex]
-        let str2 = strTmp[strTmp.index(after: strTmp.startIndex)]
-        MinusZeroCheck = String(str1) + String(str2)
-        print("str3i = \(MinusZeroCheck)")
+            let str1 = strTmp[strTmp.startIndex]
+            let str2 = strTmp[strTmp.index(after: strTmp.startIndex)]
+            calcDate.MinusZeroCheck = String(str1) + String(str2)
         }
         
         //全ての場合で=の後には出力しない
         if calcDate.operators != "=" {
             //数字の場合（数字は0~9のtagが設定されている）
             if sender.tag < 10{
-                //最初の数字が0出ない場合（01234とかを入力させない）＋10桁までしか入力させない
-                if strTmp != "" && strTmp[strTmp.startIndex] != "0" && (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-" && MinusZeroCheck != "-0" && fabs(Double(strTmp)!) < 100000000.0{
-                        print("str3 = \(MinusZeroCheck)")
+                //最初の数字が0じゃない場合（01234とかを入力させない),10桁までしか入力させない,-と-0じゃない時
+                if strTmp != "" && strTmp[strTmp.startIndex] != "0" && (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-" && calcDate.MinusZeroCheck != "-0" && fabs(Double(strTmp)!) < 100000000.0{
                         Label.text?.append("\(sender.tag)")
-                //二番目の文字が.の場合（0.0000はOK）
+                //二番目の文字が.の場合（0.000）
                 }else if strTmp.characters.count > 1 && strTmp[strTmp.index(after: strTmp.startIndex)] == "." {
-                    print(2)
                     Label.text?.append("\(sender.tag)")
                 //現在の計算部分に何も入力されていない場合は何の制限も無い
                 }else if strTmp == "" {
-                    print(3)
                     Label.text?.append("\(sender.tag)")
+                //末尾が-の場合は入力できる
                 }else if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) == "-" {
-                    print(4)
                     Label.text?.append("\(sender.tag)")
+                //三番目の文字が.の場合（-0.000）
                 }else if strTmp.characters.count > 2 && strTmp[strTmp.index(after: strTmp.index(after: strTmp.startIndex))] == "." {
-                    print(5)
                     Label.text?.append("\(sender.tag)")
                 }
                 

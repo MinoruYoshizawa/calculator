@@ -10,11 +10,12 @@ import Foundation
 
 class calc {
 
-    //記号格納用変数
+    //記号格納用変数。直前の演算子が何であったかを記録しておく。
     var operators:String = ""
     //-の場合に符号を反転させるためのフラグ
     var resultMinus:Bool = false
-    //計算用配列
+    //計算用配列。箱は２つしか使わないが、演算子を挟んだ数値二つをそれぞれ格納する。
+    //計算したら[0]に計算結果を入れて[1]は消す。
     var calcArray:[Double] = []
     //確定値用配列
     var result:[Double] = [0]
@@ -22,8 +23,12 @@ class calc {
     var loc:Int = 0
     //演算が行われた数をカウントしresult配列のどこに答えを格納するか判断するための変数
     var count:Int = 0
+    //"-0"をチェックするための箱。計算する文字列の先頭2文字が格納される
+    var MinusZeroCheck:String = ""
     
     func kakeru(Label: String?){
+        //計算処理が行われた場合、初期化する。計算すべき文字列がまた０から始まるため。
+        MinusZeroCheck = ""
         //-符号が付いている場合、文字列の抜き出しは-も含めるようにする
         if(Label!.substring(from: Label!.index(before: Label!.endIndex))) == "-"{
             loc = loc+1
@@ -66,7 +71,9 @@ class calc {
                     //resultに値が入ってる場合その数値と掛け合わせる
                     result[count] = round((result[count] / calcArray[1])*1000)/1000
                 }
+                //計算用配列の２個目は不要なので消す。
                 calcArray.removeLast()
+                //１個目には計算結果を入れておく。
                 calcArray[0] = result[count]
             }
         }
@@ -77,6 +84,7 @@ class calc {
     }
     
     func waru(Label: String?){
+        MinusZeroCheck = ""
         //-符号が付いている場合、文字列の抜き出しは-も含めるようにする
         if(Label!.substring(from: Label!.index(before: Label!.endIndex))) == "-"{
             loc = loc+1
@@ -129,6 +137,7 @@ class calc {
     }
     
     func plus(Label: String?){
+        MinusZeroCheck = ""
         count = count + 1
         if(Label!.substring(from: Label!.index(before: Label!.endIndex))) == "-"{
             loc = loc+1
@@ -177,6 +186,7 @@ class calc {
     }
     
     func minus(Label: String?){
+        MinusZeroCheck = ""
         count = count + 1
         if(Label!.substring(from: Label!.index(before: Label!.endIndex))) == "-"{
             loc = loc+1
