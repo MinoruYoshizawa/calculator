@@ -44,17 +44,15 @@ class calc {
         }
         //２個以上格納されていたら計算して確定値配列に格納する
         print("calcArray.count = \(calcArray.count)")
-        
-        //+でカウントが消えるから必要ない？
         if calcArray.count == 2 {
             if operators == "*" {
                 print("calcArray[0]=\(calcArray[0]),calcArray[1]=\(calcArray[1])")
                 if result[count] == 0 {
                     //resultに何も入っていない場合（一番最初の場合）
-                    result[count] = result[count] + calcArray[0]*calcArray[1]
+                    result[count] = round((result[count] + calcArray[0]*calcArray[1])*1000)/1000
                 }else {
                     //resultに値が入ってる場合その数値と掛け合わせる
-                    result[count] = result[count] * calcArray[1]
+                    result[count] = round((result[count] * calcArray[1])*1000)/1000
                 }
                 calcArray.removeLast()
                 calcArray[0] = result[count]
@@ -64,13 +62,13 @@ class calc {
                     //resultに何も入っていない場合（一番最初の場合）
                     //0除算の処理
                     if calcArray[1] != 0{
-                        result[count] = result[count] + calcArray[0]/calcArray[1]
+                        result[count] = round((result[count] + calcArray[0]/calcArray[1])*1000)/1000
                     }else{
                         print("0除算が発生")
                     }
                 }else {
                     //resultに値が入ってる場合その数値と掛け合わせる
-                    result[count] = result[count] / calcArray[1]
+                    result[count] = round((result[count] / calcArray[1])*1000)/1000
                 }
                 calcArray.removeLast()
                 calcArray[0] = result[count]
@@ -94,22 +92,19 @@ class calc {
             
             calcArray.append(Double(textTmp)!)
         }else{
-            //let textTemp = Label?.substring(to: (Label?.index(after: (Label?.startIndex)!))!)
             calcArray.append(Double(Label!)!)
         }
         //２個以上格納されていたら計算して確定値配列に格納する
         print("calcArray.count = \(calcArray.count)")
-        
-        //+でカウントが消えるから必要ない？
         if calcArray.count == 2 {
             if operators == "*" {
                 print("calcArray[0]=\(calcArray[0]),calcArray[1]=\(calcArray[1])")
                 if result[count] == 0 {
                     //resultに何も入っていない場合（一番最初の場合）
-                    result[count] = result[count] + calcArray[0]*calcArray[1]
+                    result[count] = round((result[count] + calcArray[0]*calcArray[1])*1000)/1000
                 }else {
                     //resultに値が入ってる場合その数値と掛け合わせる
-                    result[count] = result[count] * calcArray[1]
+                    result[count] = round((result[count] * calcArray[1])*1000)/1000
                 }
                 calcArray.removeLast()
                 calcArray[0] = result[count]
@@ -119,13 +114,13 @@ class calc {
                     //resultに何も入っていない場合（一番最初の場合）
                     //0除算の処理
                     if calcArray[1] != 0{
-                        result[count] = result[count] + calcArray[0]/calcArray[1]
+                        result[count] = round((result[count] + calcArray[0]/calcArray[1])*1000)/1000
                     }else{
                         print("0除算が発生")
                     }
                 }else {
                     //resultに値が入ってる場合その数値と掛け合わせる
-                    result[count] = result[count] / calcArray[1]
+                    result[count] = round((result[count] / calcArray[1])*1000)/1000
                 }
                 calcArray.removeLast()
                 calcArray[0] = result[count]
@@ -157,10 +152,10 @@ class calc {
         //×とか/の計算が必要な場合
         if calcArray.count == 2 {
             if operators == "*" {
-                result[count-1] = calcArray[0]*calcArray[1]
+                result[count-1] = round((calcArray[0]*calcArray[1])*1000)/1000
             }else if operators == "/" {
                 if calcArray[1] != 0{
-                    result[count-1] = calcArray[0]/calcArray[1]
+                    result[count-1] = round((calcArray[0]/calcArray[1])*1000)/1000
                 }else{
                     
                 }
@@ -171,7 +166,7 @@ class calc {
             }
         //計算が必要ない場合
         }else{
-            result[count-1] = calcArray[0]
+            result[count-1] = round((calcArray[0])*1000)/1000
             if resultMinus == true {
                 result[count-1] = result[count-1] * -1
             }
@@ -179,7 +174,7 @@ class calc {
         //計算用配列全消去
         calcArray.removeAll()
         resultMinus = false
-        print("+のresult = \(result)")
+        print("+ result = \(result)")
         //ラベルの文字数と演算子分の文字数（３）を足す
         loc = (Label?.characters.count)!+3
         operators = ("+")
@@ -205,16 +200,16 @@ class calc {
         
         if calcArray.count == 2 {
             if operators == "*" {
-                result[count-1] = calcArray[0]*calcArray[1]
+                result[count-1] = round((calcArray[0]*calcArray[1])*1000)/1000
             }else if operators == "/" {
                 if calcArray[1] != 0{
-                    result[count-1] = calcArray[0]/calcArray[1]
+                    result[count-1] = round((calcArray[0]/calcArray[1])*1000)/1000
                 }else{
                     
                 }
             }
         }else{
-            result[count-1] = calcArray[0]
+            result[count-1] = round((calcArray[0])*1000)/1000
         }
         //計算用配列全消去
         calcArray.removeAll()
@@ -248,10 +243,10 @@ class calc {
         //×とか/の計算が必要な場合
         if calcArray.count == 2 {
             if operators == "*" {
-                result[count-1] = calcArray[0]*calcArray[1]
+                result[count-1] = round((calcArray[0]*calcArray[1])*1000)/1000
             }else if operators == "/" {
                 if calcArray[1] != 0{
-                    result[count-1] = calcArray[0]/calcArray[1]
+                    result[count-1] = round((calcArray[0]/calcArray[1])*1000)/1000
                 }else{
                     
                 }
@@ -262,7 +257,7 @@ class calc {
             }
             //計算が必要ない場合
         }else{
-            result[count-1] = calcArray[0]
+            result[count-1] = round((calcArray[0])*1000)/1000
             if resultMinus == true {
                 result[count-1] = result[count-1] * -1
             }

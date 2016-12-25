@@ -11,18 +11,9 @@ import UIKit
 class ViewController: UIViewController {
     
     let calcDate = calc()
-    //var textCount = 0
-    //記号格納用配列
-    //var operators:String = ""
-    //計算用配列
-    //var calcArray:[Int64] = []
-    //確定値用配列
-    //var result:[Int64] = [0]
-    //
-    //var count:Int = 0
-    //
-    //var loc:Int = 0
-    var labelTmp:String = ""
+    var strTmp:String = ""
+    
+    @IBOutlet weak var scrollView: UIScrollView!
     
     @IBOutlet weak var Label: UILabel!
     
@@ -30,30 +21,37 @@ class ViewController: UIViewController {
     @IBAction func AC(_ sender: Any) {
         //ラベルを初期化
         Label.text = ""
-        //calcDateの変数を初期化
+        //calcクラスの変数を初期化
         calcDate.operators = ""
         calcDate.resultMinus = false
         calcDate.calcArray.removeAll()
         calcDate.result.removeAll()
+        calcDate.result = [0]
         calcDate.loc = 0
         calcDate.count = 0
     }
     
     @IBAction func waru(_ sender: Any) {
+        //ラベルに何も入っていない場合は除く
         if Label.text != ""{
+            //記号の直後は除外する（記号は半角スペースが挿入されるので末尾に無いかチェック）
             if(Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " "{
-                calcDate.waru(Label: Label.text!)
-                Label.text?.append(" ÷ ")
+                if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-"{
+                    calcDate.waru(Label: Label.text!)
+                    Label.text?.append(" ÷ ")
+                }
             }
         }
-        //0除算のエラー処理
     }
 
     @IBAction func kakeru(_ sender: Any) {
         if Label.text != ""{
             if(Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " "{
-                calcDate.kakeru(Label: Label.text!)
-                Label.text?.append(" × ")
+                //直前が-でない場合
+                if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-"{
+                    calcDate.kakeru(Label: Label.text!)
+                    Label.text?.append(" × ")
+                }
             }
         }
         
@@ -73,11 +71,19 @@ class ViewController: UIViewController {
                 }
                 //末尾が数字でない場合
                 else if predicate.evaluate(with: (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex)))) && calcDate.operators != "="{
-                    Label.text?.append("-")
+                    if calcDate.operators != "-" {
+                        if(calcDate.operators != "+"){
+                            Label.text?.append("-")
+                        }
+                    }
                 }
                 //末尾が記号の場合
                 else if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) == " " && calcDate.operators != "="{
-                    Label.text?.append("-")
+                    if calcDate.operators != "-" {
+                        if(calcDate.operators != "+"){
+                            Label.text?.append("-")
+                        }
+                    }
                 }
                 
             }
@@ -86,12 +92,14 @@ class ViewController: UIViewController {
         }
     }
     
-    
+    //minusは考慮すべきケースが多いがplusはそんなに無い
     @IBAction func plus(_ sender: Any) {
             if Label.text != ""{
                 if(Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " "{
-                    calcDate.plus(Label: Label.text!)
-                    Label.text?.append(" + ")
+                    if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-"{
+                        calcDate.plus(Label: Label.text!)
+                        Label.text?.append(" + ")
+                    }
                 }
             }
             print("result = \(calcDate.result)")
@@ -100,11 +108,19 @@ class ViewController: UIViewController {
     @IBAction func equal(_ sender: Any) {
         //初期状態、記号の後、＝の直後（数値が末尾）の場合以外
         if Label.text != "" && (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " " && calcDate.operators != "=" {
-            //計算結果を入手
-            let result = calcDate.equal(Label: Label.text!)
-            Label.text?.append(" = ")
-            //計算結果を出力
-            Label.text?.append(" \(result) ")
+            if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-"{
+                //計算結果を入手
+                var result = calcDate.equal(Label: Label.text!)
+                Label.text?.append(" = ")
+                //計算結果を出力(四捨五入して小数点第３桁まで表示)
+                result = result * 1000
+                //0除算の場合のエラー処理も入れておく("÷ 0 "が含まれていない場合答えを出力する)
+                if Label.text!.contains("÷ 0 ") == false {
+                    Label.text?.append(" \(round(result) / 1000) ")
+                }else{
+                    Label.text?.append(" \nError :due to division by zero ")
+                }
+            }
         }
     }
 
@@ -114,17 +130,68 @@ class ViewController: UIViewController {
         print("calcDAte.loc = \(calcDate.loc)")
         print("length = \(Label.text!.characters.count-calcDate.loc)")
         print("sender.tag = \(sender.tag)")
+        strTmp = (NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc)))
         //=の後には出力しない
         if calcDate.operators != "="{
             //数字の場合
-            if sender.tag < 10 {
-                Label.text?.append("\(sender.tag)")
+            if sender.tag < 10{
+                if strTmp != "" && strTmp[strTmp.startIndex] != "0" {
+            
+                        Label.text?.append("\(sender.tag)")
+                    
+                }else if strTmp.characters.count > 1 && strTmp[strTmp.index(after: strTmp.startIndex)] == "." {
+                    Label.text?.append("\(sender.tag)")
+                }else if strTmp == "" {
+                    Label.text?.append("\(sender.tag)")
+                }
+                
             //ピリオドの場合
             }else if Label.text != "" && (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != " " {
-                //ピリオドを連続で出力することを防止する
+                //ピリオドを連続で出力することを防止する(現状の計算する文字列にピリオドが含まれているかチェック)
                 if (NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc))).contains(".") == false {
-                    Label.text?.append(".")
+                    //直前が-でない場合
+                    if (Label.text!.substring(from: Label.text!.index(before: Label.text!.endIndex))) != "-"{
+                        Label.text?.append(".")
+                    }
                 }
+            }
+            if sender.tag == 0{
+                
+                /*
+                if strTmp != "" && strTmp[strTmp.startIndex] != "0" {
+                    Label.text?.append("\(sender.tag)")
+                }else if strTmp == "" {
+                    Label.text?.append("\(sender.tag)")
+                }else if strTmp.characters.count > 1 && strTmp[strTmp.index(after: strTmp.startIndex)] == "." {
+                    Label.text?.append("\(sender.tag)")
+                }
+                */
+                /*
+                if(calcDate.loc != 0){
+                    //print("label.text.endIndex = \((Label.text?.endIndex)!), offsetBy:\((Label.text!.characters.count)-calcDate.loc))))")
+                    //print("before:label = \(Label.text?.index(before:(Label.text?.endIndex)!))")
+                    
+                    //strTmp = (Label.text?.substring(to:Label.text!.index((Label.text?.endIndex)!, offsetBy: (Label.text!.characters.count)-calcDate.loc)))!
+                    
+                    //let str = (NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc)))
+                    //print(str[str.startIndex])
+                    
+                
+                }else if strTmp != ""{
+                    if strTmp[strTmp.startIndex] != "0" {
+                        self.Label.text?.append("\(sender.tag)")
+                    }
+                }else {
+                    self.Label.text?.append("\(sender.tag)")
+                }
+                */
+                
+                
+                //if (NSString(string: Label.text!).substring(with: NSRange(location: calcDate.loc, length: (Label.text!.characters.count)-calcDate.loc))).contains(".") == true {
+                   // if Label.text?.substring(to:Label.text!.index((Label.text?.endIndex)!, offsetBy: (Label.text!.characters.count)-calcDate.loc)) == ""{
+                       // self.Label.text?.append("\(sender.tag)")
+                   // }
+                //}
             }
         }
     }
@@ -132,6 +199,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        //self.view.backgroundColor = UIColor.white
+        //let screenSize = UIScreen.main.bounds.size
+        // 表示可能最大行数を無制限にする.
+        Label.numberOfLines = 0
     }
 
     override func didReceiveMemoryWarning() {
